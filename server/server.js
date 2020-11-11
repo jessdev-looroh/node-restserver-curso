@@ -5,33 +5,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 require("./config/config");
 const express_1 = __importDefault(require("express"));
-const app = express_1.default();
 const body_parser_1 = require("body-parser");
+const mongoose_1 = __importDefault(require("mongoose"));
+const colors_1 = __importDefault(require("colors"));
+const usuario_route_1 = __importDefault(require("./routes/usuario.route"));
+const app = express_1.default();
+mongoose_1.default.connect(`${process.env.URLDB}`, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }, (err) => {
+    if (err)
+        throw err;
+    console.log(colors_1.default.green("Base de datos ONLINE"));
+});
 app.use(body_parser_1.urlencoded({ extended: false }));
 app.use(body_parser_1.json());
-app.get("/usuario", function (req, res) {
-    res.json("get Usuario");
-});
-app.post('/usuario', function (req, res) {
-    let data = req.body;
-    if (data.nombre == undefined) {
-        res.status(400).json({
-            ok: false,
-            mensaje: "El nombre es necesario"
-        });
-    }
-    else {
-        res.json(data);
-    }
-});
-app.put('/usuario/:id', (req, res) => {
-    let id = req.params.id;
-    res.json({ id });
-});
-app.delete('/usuario/:id', (req, res) => {
-    // console.log(req.body);
-    res.json("delete");
-});
+app.use(usuario_route_1.default);
 app.listen(process.env.PORT, () => {
     console.log("Escuchando puerto : ", process.env.PORT);
 });

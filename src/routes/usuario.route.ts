@@ -1,21 +1,16 @@
-import bodyParser from "body-parser";
-import express from "express";
-const app = express();
-import Usuario from "../models/usuario.model";
+// import bodyParser from "body-parser";
+import express, { Request, Response } from "express";
 import bcrypt from "bcrypt";
+import Usuario from "../models/usuario.model";
 import _ from "underscore";
 import { QueryFindOneAndUpdateOptions } from "mongoose";
+import { verificaToken, verificaAdminRole } from '../middlewares/autenticacion.mw';
 
-// interface UsuarioModel{
-//     nombre:string,
-//     email :string,
-//     password: string,
-//     img : string,
-//     roles: string,
-//     estado: boolean,
-//     google: boolean
-// }
-app.get("/usuario", function (req, res) {
+
+const app = express();
+
+app.get("/usuario", verificaToken, function (req, res) {
+  
   let pagina = req.query.pagina || 1;
   let limite = req.query.limite || 10;
   pagina = Number(pagina);
@@ -23,7 +18,7 @@ app.get("/usuario", function (req, res) {
   let skip = 0;
   pagina == 1 ? (skip = 0) : (skip = pagina * limite - limite);
 
-  Usuario.find({estado:true}, "nombre email role estado google img")
+  Usuario.find({ estado: true }, "nombre email role estado google img")
     .skip(skip)
     .limit(limite)
     .exec((err, usuarios) => {
@@ -33,7 +28,7 @@ app.get("/usuario", function (req, res) {
           err,
         });
       }
-      Usuario.count({estado:true}, (err, conteo) => {
+      Usuario.countDocuments({ estado: true }, (err, conteo) => {
         res.json({
           ok: true,
           pagina,
@@ -45,9 +40,8 @@ app.get("/usuario", function (req, res) {
     });
 });
 
-app.post("/usuario", function (req, res) {
+app.post("/usuario",[verificaToken,verificaAdminRole],(req:Request, res:Response)=>{
   let data = req.body;
-
   let usuario = new Usuario({
     nombre: data.nombre,
     email: data.email,
@@ -79,7 +73,7 @@ app.post("/usuario", function (req, res) {
   //   }
 });
 
-app.put("/usuario/:id", (req, res) => {
+app.put("/usuario/:id", [verificaToken,verificaAdminRole],(req:Request, res:Response) => {
   let id = req.params.id;
   let body = _.pick(req.body, ["nombre", "email", "role", "estado"]);
 
@@ -99,17 +93,22 @@ app.put("/usuario/:id", (req, res) => {
   });
 });
 
-app.delete("/usuario/:id", (req, res) => {
+app.delete("/usuario/:id",[verificaToken,verificaAdminRole], (req:Request, res:Response) => {
   let id = req.params.id;
-  Usuario.findByIdAndUpdate(id, { estado: false },{new:true}, (err, usuario) => {
-    if (err) {
-      return res.status(400).json({
-        ok: false,
-        err,
-      });
+  Usuario.findByIdAndUpdate(
+    id,
+    { estado: false },
+    { new: true },
+    (err, usuario) => {
+      if (err) {
+        return res.status(400).json({
+          ok: false,
+          err,
+        });
+      }
+      res.json({ ok: true, usuario });
     }
-    res.json({ ok: true, usuario });
-  });
+  );
   //   Usuario.findByIdAndRemove(id, (err, usuarioBorrado) => {
   //     if (err) {
   //       return res.status(400).json({

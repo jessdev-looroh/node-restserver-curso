@@ -2,21 +2,14 @@
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+// import bodyParser from "body-parser";
 const express_1 = __importDefault(require("express"));
-const app = express_1.default();
-const usuario_model_1 = __importDefault(require("../models/usuario.model"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const usuario_model_1 = __importDefault(require("../models/usuario.model"));
 const underscore_1 = __importDefault(require("underscore"));
-// interface UsuarioModel{
-//     nombre:string,
-//     email :string,
-//     password: string,
-//     img : string,
-//     roles: string,
-//     estado: boolean,
-//     google: boolean
-// }
-app.get("/usuario", function (req, res) {
+const autenticacion_mw_1 = require("../middlewares/autenticacion.mw");
+const app = express_1.default();
+app.get("/usuario", autenticacion_mw_1.verificaToken, function (req, res) {
     let pagina = req.query.pagina || 1;
     let limite = req.query.limite || 10;
     pagina = Number(pagina);
@@ -33,7 +26,7 @@ app.get("/usuario", function (req, res) {
                 err,
             });
         }
-        usuario_model_1.default.count({ estado: true }, (err, conteo) => {
+        usuario_model_1.default.countDocuments({ estado: true }, (err, conteo) => {
             res.json({
                 ok: true,
                 pagina,
@@ -44,7 +37,7 @@ app.get("/usuario", function (req, res) {
         });
     });
 });
-app.post("/usuario", function (req, res) {
+app.post("/usuario", [autenticacion_mw_1.verificaToken, autenticacion_mw_1.verificaAdminRole], (req, res) => {
     let data = req.body;
     let usuario = new usuario_model_1.default({
         nombre: data.nombre,
@@ -73,7 +66,7 @@ app.post("/usuario", function (req, res) {
     //     res.json(data);
     //   }
 });
-app.put("/usuario/:id", (req, res) => {
+app.put("/usuario/:id", [autenticacion_mw_1.verificaToken, autenticacion_mw_1.verificaAdminRole], (req, res) => {
     let id = req.params.id;
     let body = underscore_1.default.pick(req.body, ["nombre", "email", "role", "estado"]);
     let options = {
@@ -90,7 +83,7 @@ app.put("/usuario/:id", (req, res) => {
         res.json({ ok: true, usuario: userDB });
     });
 });
-app.delete("/usuario/:id", (req, res) => {
+app.delete("/usuario/:id", [autenticacion_mw_1.verificaToken, autenticacion_mw_1.verificaAdminRole], (req, res) => {
     let id = req.params.id;
     usuario_model_1.default.findByIdAndUpdate(id, { estado: false }, { new: true }, (err, usuario) => {
         if (err) {

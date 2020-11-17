@@ -8,7 +8,7 @@ const express_1 = __importDefault(require("express"));
 const body_parser_1 = require("body-parser");
 const mongoose_1 = __importDefault(require("mongoose"));
 const colors_1 = __importDefault(require("colors"));
-const usuario_route_1 = __importDefault(require("./routes/usuario.route"));
+const index_route_1 = __importDefault(require("./routes/index.route"));
 const app = express_1.default();
 mongoose_1.default.connect(`${process.env.URLDB}`, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }, (err) => {
     if (err)
@@ -17,7 +17,8 @@ mongoose_1.default.connect(`${process.env.URLDB}`, { useNewUrlParser: true, useC
 });
 app.use(body_parser_1.urlencoded({ extended: false }));
 app.use(body_parser_1.json());
-app.use(usuario_route_1.default);
+//configuracion global de rutas
+app.use(index_route_1.default);
 app.listen(process.env.PORT, () => {
     console.log("Escuchando puerto : ", process.env.PORT);
 });

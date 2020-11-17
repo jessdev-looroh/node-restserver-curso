@@ -4,15 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 const mongoose_1 = __importDefault(require("mongoose"));
 const mongoose_unique_validator_1 = __importDefault(require("mongoose-unique-validator"));
-// interface UsuarioModel{
-//     nombre:string,
-//     email :string,
-//     password: string,
-//     img : string,
-//     roles: string,
-//     estado: boolean,
-//     google: boolean
-// }
 let Schema = mongoose_1.default.Schema;
 let rolesValidos = { values: ["ADMIN_ROLE", "USER_ROLE"], message: '{VALUE} no es un rol válido' };
 let usuarioSchema = new Schema({

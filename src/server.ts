@@ -3,7 +3,7 @@ import express from "express";
 import {urlencoded,json} from "body-parser";
 import mongoose from 'mongoose';
 import colors from 'colors';
-import usuarioRoute from './routes/usuario.route'
+import indexRoutes from './routes/index.route';
 
 const app = express();
 mongoose.connect(`${process.env.URLDB}`,{ useNewUrlParser:true,useCreateIndex:true,useUnifiedTopology: true },(err)=>{ 
@@ -12,9 +12,10 @@ mongoose.connect(`${process.env.URLDB}`,{ useNewUrlParser:true,useCreateIndex:tr
 }); 
 app.use(urlencoded({extended:false}));
 app.use(json());
+ 
+//configuracion global de rutas
+app.use(indexRoutes);
 
-
-app.use(usuarioRoute);
 
 
 app.listen(process.env.PORT,()=>{

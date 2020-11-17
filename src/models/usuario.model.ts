@@ -1,15 +1,6 @@
 import mongoose from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
 
-// interface UsuarioModel{
-//     nombre:string,
-//     email :string,
-//     password: string,
-//     img : string,
-//     roles: string,
-//     estado: boolean,
-//     google: boolean
-// }
 let Schema = mongoose.Schema;
 let rolesValidos = { values: ["ADMIN_ROLE", "USER_ROLE"],message: '{VALUE} no es un rol válido' };
 

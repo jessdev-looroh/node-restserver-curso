@@ -9,6 +9,7 @@ const body_parser_1 = require("body-parser");
 const mongoose_1 = __importDefault(require("mongoose"));
 const colors_1 = __importDefault(require("colors"));
 const index_route_1 = __importDefault(require("./routes/index.route"));
+const path_1 = __importDefault(require("path"));
 const app = express_1.default();
 mongoose_1.default.connect(`${process.env.URLDB}`, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }, (err) => {
     if (err)
@@ -17,6 +18,8 @@ mongoose_1.default.connect(`${process.env.URLDB}`, { useNewUrlParser: true, useC
 });
 app.use(body_parser_1.urlencoded({ extended: false }));
 app.use(body_parser_1.json());
+//habilitar la carpeta public
+app.use(express_1.default.static(path_1.default.resolve(__dirname, '../public')));
 //configuracion global de rutas
 app.use(index_route_1.default);
 app.listen(process.env.PORT, () => {

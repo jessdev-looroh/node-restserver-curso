@@ -18,6 +18,7 @@ mongoose_1.default.connect(`${process.env.URLDB}`, { useNewUrlParser: true, useC
 });
 app.use(body_parser_1.urlencoded({ extended: false }));
 app.use(body_parser_1.json());
+//
 //habilitar la carpeta public
 app.use(express_1.default.static(path_1.default.resolve(__dirname, '../public')));
 //configuracion global de rutas

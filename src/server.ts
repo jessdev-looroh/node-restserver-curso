@@ -15,6 +15,9 @@ mongoose.connect(`${process.env.URLDB}`,{ useNewUrlParser:true,useCreateIndex:tr
 app.use(urlencoded({extended:false}));
 app.use(json());
 
+//
+
+
 //habilitar la carpeta public
 app.use(express.static(path.resolve( __dirname,'../public')) );
 

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verificaAdminRole = exports.verificaToken = void 0;
+exports.verificaAdminRole = exports.verificaTokenImg = exports.verificaToken = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 exports.verificaToken = (req, res, next) => {
     let token = req.get('token');
@@ -13,6 +13,22 @@ exports.verificaToken = (req, res, next) => {
             return res.status(401).json({
                 ok: false,
                 err
+            });
+        }
+        req.usuario = decoded.usuario;
+        next();
+    });
+};
+exports.verificaTokenImg = (req, res, next) => {
+    let token = req.query.token;
+    let SEED = process.env.SEED;
+    jsonwebtoken_1.default.verify(token, SEED, (err, decoded) => {
+        if (err) {
+            return res.status(401).json({
+                ok: false,
+                err: {
+                    message: 'Token no válido'
+                }
             });
         }
         req.usuario = decoded.usuario;

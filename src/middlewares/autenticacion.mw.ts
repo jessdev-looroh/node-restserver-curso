@@ -20,6 +20,24 @@ export let verificaToken = (req:any,res:Response,next:NextFunction)=>{
     });
 
 };
+export let verificaTokenImg = (req:any,res:Response,next:NextFunction)=>{
+    
+    let token:any = req.query.token;
+    let SEED : any =process.env.SEED;
+    jwt.verify(token,SEED,(err:any,decoded:any)=>{
+        if(err){
+            return res.status(401).json({
+                ok:false,
+                err:{
+                    message: 'Token no válido'
+                }
+            })
+        }
+        req.usuario = decoded.usuario;
+        next();
+    });
+
+};
 //==========================================
 //Verificar Admin Roll
 //==========================================
